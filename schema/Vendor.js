@@ -1,4 +1,10 @@
+const {
+  securityContext: { appID },
+} = COMPILE_CONTEXT;
+
 cube(`Vendors`, {
+  dataSource: appID,
+
   sql: `SELECT * FROM vendors`,
 
   joins: {
@@ -21,6 +27,4 @@ cube(`Vendors`, {
       type: `string`
     }
   },
-
-  dataSource: `default`
 });

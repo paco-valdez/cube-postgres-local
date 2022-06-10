@@ -1,4 +1,10 @@
+const {
+  securityContext: { appID },
+} = COMPILE_CONTEXT;
+
 cube(`Orders`, {
+  dataSource: appID,
+
   sql: `SELECT * FROM orders`,
 
   preAggregations: {
@@ -30,5 +36,4 @@ cube(`Orders`, {
       type: `string`
     }
   },
-  dataSource: `default`,
 });
