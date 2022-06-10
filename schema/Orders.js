@@ -1,19 +1,24 @@
 cube(`Orders`, {
   sql: `SELECT * FROM orders`,
 
-  joins: {
-    Vendors: {
-      sql:  `${CUBE}.vendor_id = ${Vendors}.vendor_id`,
-      relationship: `belongsTo`
+  preAggregations: {
+    ordersByVendor: {
+      measures: [Orders.count],
+      dimensions: [Vendors.name]
     }
   },
 
+  joins: {
+    Vendors: {
+      sql: `${CUBE}.vendor_id = ${Vendors}.vendor_id`,
+      relationship: `belongsTo`
+    }
+  },
   measures: {
     count: {
       type: `count`
     }
   },
-
   dimensions: {
     id: {
       sql: `order_id`,
@@ -25,6 +30,5 @@ cube(`Orders`, {
       type: `string`
     }
   },
-
-  dataSource: `default`
+  dataSource: `default`,
 });
