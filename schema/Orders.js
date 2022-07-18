@@ -27,6 +27,10 @@ cube(`Orders`, {
     vendorName: {
       sql: `${Vendors}.name`,
       type: `string`
+    },
+    budgetedDim: {
+      sql: `budgeted_amount`,
+      type: `string`
     }
   },
 });

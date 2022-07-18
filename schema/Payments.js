@@ -49,15 +49,15 @@ cube(`OrdersPayments`, {
   joins: {
     Payments: {
       sql: `${CUBE}.payment_id = ${Payments}.payment_id`,
-      relationship: `hasMany`
+      relationship: `belongsTo`
     },
     Merchants: {
       sql: `${CUBE}.merchant_id = ${Merchants}.merchant_id`,
-      relationship: `hasMany`
+      relationship: `belongsTo`
     },
     Orders: {
       sql: `${CUBE}.order_id = ${Orders}.order_id`,
-      relationship: `hasMany`
+      relationship: `belongsTo`
     }
   },
   measures: {
@@ -68,6 +68,14 @@ cube(`OrdersPayments`, {
     revenue: {
       type: `sum`,
       sql: `${paymentAmount}`
+    },
+    budgetedAmount: {
+      type: `sum`,
+      sql: `${budgetedAmountDim}`
+    },
+    commission: {
+      type: 'max',
+      sql: `${commissionDim}`
     }
   },
 
@@ -79,9 +87,15 @@ cube(`OrdersPayments`, {
     },
     paymentAmount: {
       sql: `${Payments.amountDim}`,
-      type: `number`,
-      // subQuery: true,
-      // propagateFiltersToSubQuery: true
+      type: `number`
+    },
+    budgetedAmountDim: {
+      sql: `${Orders.budgetedDim}`,
+      type: `number`
+    },
+    commissionDim: {
+      sql: `${Merchants.commission}`,
+      type: `number`
     }
   },
 });
