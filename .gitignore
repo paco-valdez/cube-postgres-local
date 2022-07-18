@@ -24,3 +24,5 @@ yarn-error.log*
 
 .cubestore
 /postgres-data
+.idea
+
