@@ -129,10 +129,14 @@ insert into payments(tenant_id, payment_id, reference, amount) values
 on conflict do nothing;
 
 insert into orders_payments(order_id, payment_id, merchant_id) values
-  (1, 1, 1)
-, (2, 2, 1)
-, (3, 3, 2)
-, (4, 4, 3)
+  (1, 1, NULL)
+, (1, NULL, 1)
+, (2, 2, NULL)
+, (2, NULL, 1)
+, (3, 3, NULL)
+, (3, NULL, 2)
+, (4, 4, NULL)
+, (4, NULL, 3)
 on conflict do nothing;
 commit;
 

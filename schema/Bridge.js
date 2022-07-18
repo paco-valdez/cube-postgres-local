@@ -9,7 +9,8 @@ cube(`OrdersPayments`, {
   
     preAggregations: {
       ordersByVendor: {
-        measures: [OrdersPayments.count, OrdersPayments.revenue],
+        measures: [OrdersPayments.count, OrdersPayments.revenue, 
+            OrdersPayments.budgetedAmount, OrdersPayments.commission],
         dimensions: [Orders.vendorName]
       }
     },
