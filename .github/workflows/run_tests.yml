@@ -21,6 +21,9 @@ jobs:
     
     - name: where am i
       run: pwd
+      
+    - name: where am i
+      run: ls -lah
 
     - name: Start containers
       run: docker-compose -f "docker-compose.yml" up -d --build
