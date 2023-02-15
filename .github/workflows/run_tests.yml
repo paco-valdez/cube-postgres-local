@@ -18,12 +18,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    
+    - name: where am i
+      run: pwd
 
     - name: Start containers
       run: docker-compose -f "docker-compose.yml" up -d --build
-      
-    - name: where am i
-      run: pwd
 
 #     - name: Install node
 #       uses: actions/setup-node@v1
