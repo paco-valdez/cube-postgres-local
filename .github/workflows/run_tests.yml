@@ -21,6 +21,9 @@ jobs:
 
     - name: Start containers
       run: docker-compose -f "docker-compose.yml" up -d --build
+      
+    - name: where am i
+      run: pwd
 
 #     - name: Install node
 #       uses: actions/setup-node@v1
