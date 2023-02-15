@@ -3,12 +3,12 @@ name: Test
 on:
   push:
     branches:
-    - main
+    - master
     - features/**
     - dependabot/**
   pull_request:
     branches:
-    - main
+    - master
 
 jobs:
   docker:
@@ -18,9 +18,15 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    
+    - name: where am i
+      run: pwd
+      
+    - name: where am i
+      run: ls -lah
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up -d --build
+      run: docker-compose -f "docker-compose.yaml" up -d --build
 
 #     - name: Install node
 #       uses: actions/setup-node@v1
@@ -35,4 +41,4 @@ jobs:
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f "docker-compose.yml" down
+      run: docker-compose -f "docker-compose.yaml" down
