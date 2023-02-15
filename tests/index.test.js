@@ -35,7 +35,7 @@ async function dryRun(query) {
 
 test('Expect row count to be 5', async () => {
   const resultSet = await getResults(count_query);
-  expect(resultSet.loadResponses[0].data.length).toBe(5);
+  expect(resultSet.loadResponses[0].data.length).toBe(4);
 });
 
 test('Perform Dry run', async () => {

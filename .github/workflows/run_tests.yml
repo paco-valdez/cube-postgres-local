@@ -18,12 +18,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    
-    - name: where am i
-      run: pwd
-      
-    - name: where am i
-      run: ls -lah
 
     - name: Start containers
       run: docker-compose -f "docker-compose.yaml" up -d --build
