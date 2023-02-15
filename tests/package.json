@@ -1,0 +1,21 @@
+{
+  "name": "cube-api-tests",
+  "version": "1.0.0",
+  "description": "Cube tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "cube",
+    "test",
+    "jest"
+  ],
+  "author": "Paco Valdez",
+  "license": "MIT",
+  "devDependencies": {
+    "@cubejs-client/core": "^0.31.46",
+    "jest": "^29.4.3",
+    "jwt-encode": "^1.0.1"
+  }
+}
