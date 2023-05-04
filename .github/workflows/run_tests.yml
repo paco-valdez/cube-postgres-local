@@ -36,3 +36,6 @@ jobs:
     - name: Stop containers
       if: always()
       run: docker-compose -f "docker-compose.yaml" down
+
+    - name: Run schema compile check
+      run: npm exec cubejs-cli validate
