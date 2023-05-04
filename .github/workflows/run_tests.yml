@@ -28,10 +28,10 @@ jobs:
         node-version: 19.x
 
     - name: Install dependencies
-      run: npm --prefix ./tests install
+      run: npm install
 
     - name: Run tests
-      run: npm --prefix ./tests run test
+      run: npm run test
 
     - name: Stop containers
       if: always()
