@@ -19,9 +19,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Start containers
-      run: docker-compose -f "docker-compose.yaml" up -d --build
-
     - name: Install node
       uses: actions/setup-node@v1
       with:
@@ -30,6 +27,12 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Run schema compile check
+      run: npm exec cubejs-cli validate
+
+    - name: Start containers
+      run: docker-compose -f "docker-compose.yaml" up -d --build
+
     - name: Run tests
       run: npm run test
 
@@ -37,5 +40,4 @@ jobs:
       if: always()
       run: docker-compose -f "docker-compose.yaml" down
 
-    - name: Run schema compile check
-      run: npm exec cubejs-cli validate
+   
