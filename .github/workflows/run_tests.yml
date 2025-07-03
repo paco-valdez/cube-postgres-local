@@ -32,13 +32,26 @@ jobs:
       run: docker compose -f "docker-compose.yaml" up -d --build
 
     - name: Run model validation inside docker container
-      run: docker compose exec cube_api sh -c "cubejs validate"
+      timeout-minutes: 5
+      run: |
+        # Run command and capture all output
+        output=$(docker compose exec cube_api sh -c "cubejs validate" 2>&1 || echo "TIMEOUT_OR_ERROR")
+        echo "$output"
+
+        # Check if success message is present
+        if echo "$output" | grep -q "✅ Cube Schema is valid"; then
+          echo "Validation completed successfully"
+          exit 0
+        else
+          echo "Validation failed - success message not found"
+          exit 1
+        fi
 
     - name: Run tests
       run: npm run test
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f "docker-compose.yaml" down
+      run: docker compose -f "docker-compose.yaml" down
 
    
