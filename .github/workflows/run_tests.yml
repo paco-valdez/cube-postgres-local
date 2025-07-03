@@ -34,14 +34,22 @@ jobs:
     - name: Run model validation inside docker container
       timeout-minutes: 5
       run: |
-        docker compose exec cube_api sh -c "cubejs validate" 2>&1 | grep -m 1 "✅ Cube Schema is valid"
-        if [ ${PIPESTATUS[0]} -eq 0 ]; then
-          echo "SUCCESS: Cube Schema validation completed"
-          exit 0
-        else
-          echo "FAILED: Validation process failed"
-          exit 1
-        fi
+        echo "Starting Cube.js schema validation..."
+
+        # Start validation in the background
+        docker compose exec cube_api sh -c "cubejs validate" 2>&1 | while IFS= read -r line; do
+          echo "$line"
+        
+          if echo "$line" | grep -q "✅ Cube Schema is valid"; then
+            echo "SUCCESS: Cube Schema validation completed"
+            kill $$  # Kill this shell to exit immediately
+          fi
+        done
+        
+        # If it gets here, validation failed or hung indefinitely
+        echo "FAILED: Schema validation did not complete successfully"
+        exit 1
+
 
     - name: Run tests
       run: npm run test
