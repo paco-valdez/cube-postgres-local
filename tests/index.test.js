@@ -63,3 +63,4 @@ test('Invalid Query Dry run', async () => {
         expect(e.message).toBe("Cube 'Orders2' not found for path 'Orders2.count'");
     }
 });
+
