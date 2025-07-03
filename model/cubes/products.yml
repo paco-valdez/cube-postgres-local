@@ -1,0 +1,26 @@
+cubes:
+  - name: products
+    sql: SELECT * FROM 's3://cube-tutorial/products.csv'
+    public: false
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+
+      - name: name
+        sql: name
+        type: string
+
+      - name: created_at
+        sql: "{CUBE}.created_at::TIMESTAMP"
+        type: time
+
+      - name: product_category
+        sql: product_category
+        type: string
+
+    measures:
+      - name: count
+        type: count
