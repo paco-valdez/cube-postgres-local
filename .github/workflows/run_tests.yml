@@ -39,26 +39,26 @@ jobs:
         success=0
         tmpfile=$(mktemp)
         
-        # Run cubejs validate in background and capture output to a temp file
+        # Run cubejs validate in background and write output to a temp file
         docker compose exec cube_api sh -c "cubejs validate" > "$tmpfile" 2>&1 &
         cmd_pid=$!
         
-        # Stream logs line by line while checking for the success message
+        # Stream logs line-by-line and look for success message
         tail -f "$tmpfile" --pid=$cmd_pid | while IFS= read -r line; do
           echo "$line"
           if echo "$line" | grep -q "✅ Cube Schema is valid"; then
             success=1
-            kill "$cmd_pid" 2>/dev/null
             break
           fi
         done
         
-        # Wait for validate process to exit cleanly
+        # Wait for validate command to finish
         wait "$cmd_pid" 2>/dev/null
         
-        # Clean up and return status
+        # Clean up
         rm "$tmpfile"
         
+        # Return result
         if [ "$success" -eq 1 ]; then
           echo "SUCCESS: Cube Schema validation completed"
           exit 0
