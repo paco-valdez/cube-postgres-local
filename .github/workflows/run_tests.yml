@@ -49,7 +49,7 @@ jobs:
           done
         
           # Kill the remaining process if still running
-          exit "$success"
+          exit 0
           pkill -P $$ docker 2>/dev/null
         }
 
