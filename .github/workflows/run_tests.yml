@@ -37,7 +37,7 @@ jobs:
         echo "Starting Cube.js schema validation..."
 
         success=0
-
+        
         # Run in background and capture PID
         docker compose exec cube_api sh -c "cubejs validate" 2>&1 | {
           while IFS= read -r line; do
@@ -51,6 +51,7 @@ jobs:
           # Kill the remaining process if still running
           pkill -P $$ docker 2>/dev/null
           exit "$success"
+        }
 
 
     - name: Run tests
