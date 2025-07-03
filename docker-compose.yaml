@@ -18,4 +18,4 @@ services:
       - CUBEJS_SQL_PASSWORD=mypassword
     volumes:
       - ${PWD}:/cube/conf
-      - ${PWD}/mode:/cube/model
+      - ${PWD}/model:/cube/model

@@ -9,4 +9,4 @@ template = TemplateContext()
 # Learn more: https://cube.dev/docs/product/data-modeling/dynamic/jinja#python
 @template.function('is_accessible_by_team')
 def is_accessible_by_team(team: str, ctx: dict) -> bool:
-  return team == ctx['securityContext'].setdefault('team', 'default')
+  return team == ctx.get('securityContext', {}).get('team', 'default')
