@@ -29,10 +29,10 @@ jobs:
       run: npm install
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yaml" up -d --build
+      run: docker compose -f "docker-compose.yaml" up -d --build
 
     - name: Run model validation inside docker container
-      run: docker-compose exec cube_api sh -c "cubejs validate"
+      run: docker compose exec cube_api sh -c "cubejs validate"
 
     - name: Run tests
       run: npm run test
