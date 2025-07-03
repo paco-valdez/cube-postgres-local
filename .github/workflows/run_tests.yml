@@ -36,19 +36,25 @@ jobs:
       run: |
         echo "Starting Cube.js schema validation..."
 
-        # Start validation in the background
+        success=0
+        
         docker compose exec cube_api sh -c "cubejs validate" 2>&1 | while IFS= read -r line; do
           echo "$line"
         
           if echo "$line" | grep -q "✅ Cube Schema is valid"; then
-            echo "SUCCESS: Cube Schema validation completed"
-            exit 0
+            success=1
+            break
           fi
         done
         
-        # If it gets here, validation failed or hung indefinitely
-        echo "FAILED: Schema validation did not complete successfully"
-        exit 1
+        # After the loop, check the success flag
+        if [ "$success" -eq 1 ]; then
+          echo "SUCCESS: Cube Schema validation completed"
+          exit 0
+        else
+          echo "FAILED: Schema validation did not complete successfully"
+          exit 1
+        fi
 
 
     - name: Run tests
