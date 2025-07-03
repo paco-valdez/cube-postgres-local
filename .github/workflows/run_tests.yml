@@ -43,7 +43,6 @@ jobs:
           if echo "$line" | grep -q "✅ Cube Schema is valid"; then
             echo "SUCCESS: Cube Schema validation completed"
             exit 0
-            kill $$  # Kill this shell to exit immediately
           fi
         done
         
