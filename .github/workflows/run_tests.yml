@@ -31,12 +31,9 @@ jobs:
     - name: Start containers
       run: docker compose -f "docker-compose.yaml" up -d --build
 
-    - name: run validate with npx
-      run: npx cubejs-cli validate
-
     - name: Run model validation inside docker container
       id: docker-validate
-      if: always()
+      continue-on-error: true
       run: |
         echo "Starting Cube.js schema validation..."
         
@@ -62,7 +59,14 @@ jobs:
 
     - name: Check if docker validation was successful
       if: always()
-      run: echo "Result from previous task is ${{ steps.docker-validate.outputs.validation_result }}"
+      run: |
+        if [${{ steps.docker-validate.outputs.validation_result }}" == 1]; then
+          echo "Schema validation success"
+          exit 0
+        else
+          echo "Schema validation failed. See previous step for details"
+          exit 1
+        fi
 
     - name: Run tests
       run: npm run test
