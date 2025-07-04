@@ -1,0 +1,22 @@
+views:
+  - name: orders
+
+    cubes:
+      - join_path: base_orders
+        includes:
+          - status
+          - created_at
+          - count
+          - completed_count
+          - completed_percentage
+          - total
+          - dau
+          - wau
+          - mau
+
+      - join_path: base_orders.users
+        prefix: true
+        includes:
+          - city
+          - age
+          - state

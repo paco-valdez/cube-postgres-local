@@ -1,0 +1,109 @@
+# Cubes represent tables of data in Cube.
+# Learm more: https://cube.dev/docs/reference/data-model/cube
+cubes:
+  - name: base_orders
+
+    # DuckDB is used as the data source: https://cube.dev/docs/product/configuration/data-sources/duckdb
+    # DuckDB allows querying data from AWS S3 in the following fashion
+    sql: SELECT * FROM 's3://cube-tutorial/orders.csv'
+
+    # It's recommended that cubes remain private.
+    # Only views should be exposed to BI and data visualization tools
+    public: false
+
+    # Joins define relationships between cubes.
+    # Learn more: https://cube.dev/docs/product/data-modeling/concepts/working-with-joins
+    joins:
+      - name: line_items
+        sql: '{CUBE.id} = {line_items.order_id}'
+        relationship: one_to_many
+
+      - name: users
+        sql: "{CUBE.user_id} = {users.id}"
+        relationship: many_to_one
+
+    # Dimensions represent the properties of a single data point in the cube.
+    # Learn more: https://cube.dev/docs/reference/data-model/dimensions
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+
+      - name: user_id
+        sql: user_id
+        type: number
+        public: false
+
+      - name: status
+        sql: status
+        type: string
+
+      - name: created_at
+        sql: "{CUBE}.created_at::TIMESTAMP"
+        type: time
+
+      - name: completed_at
+        sql: "{CUBE}.completed_at::TIMESTAMP"
+        type: time
+
+    # Measures represent the properties of a set of data points in the cube.
+    # Learn more: https://cube.dev/docs/reference/data-model/measures
+    measures:
+      - name: count
+        type: count
+
+      - name: completed_count
+        type: count
+        filters:
+          - sql: "{CUBE}.status = 'completed'"
+
+      # Calculated measures can reference other measures.
+      # Learn more: https://cube.dev/docs/reference/data-model/measures#calculated-measures
+      - name: completed_percentage
+        sql: "({completed_count} / NULLIF({count}, 0)) * 100.0"
+        type: number
+        format: percent
+
+      - name: total
+        type: count
+        rolling_window:
+          trailing: unbounded
+
+      # Jinja can be used to remove code duplication and add dynamicity into the data model.
+      # Here, a dictionary of 'metrics' is iterated over to create three rolling_window measures.
+      # Learn more: https://cube.dev/docs/product/data-modeling/dynamic/jinja
+      {% set metrics = {
+        'dau': '1 day',
+        'wau': '1 week',
+        'mau': '1 month'
+      } %}
+      {% for name, window in metrics | items %}
+      - name: {{ name }}
+        sql: user_id
+        type: count_distinct
+        rolling_window:
+          trailing: {{ window }}
+      {% endfor %}
+
+    # Pre-aggregations accelerate queries by calculating and storing the data in advance.
+    # Learn more: https://cube.dev/docs/product/caching/using-pre-aggregations
+    pre_aggregations:
+      - name: orders_by_month
+        measures:
+          - count
+          - completed_count
+          - completed_percentage
+        time_dimension: created_at
+        granularity: month
+
+        # Below, a pre-aggregation includes dimensions and measures from this and other cubes.
+        # It's totally fine if there's a join defined between these cubes
+      - name: orders_and_line_items_of_users
+        measures:
+          - count
+          - line_items.count
+          - line_items.sum_price
+        dimensions:
+          - users.gender
+          - users.state
