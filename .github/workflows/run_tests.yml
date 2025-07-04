@@ -20,6 +20,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
+    - name: Install libpython
+      run: sudo apt install libpython3.11-dev
+
     - name: Install node
       uses: actions/setup-node@v1
       with:
@@ -30,6 +33,9 @@ jobs:
 
     - name: Start containers
       run: docker compose -f "docker-compose.yaml" up -d --build
+
+    - name: run validate with npx
+      run: npx run cubejs-cli validate
 
     - name: Run model validation inside docker container
       timeout-minutes: 5
