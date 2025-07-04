@@ -53,7 +53,7 @@ jobs:
           done
         
           # echo result to github output
-          echo "validation_result: ${success}" >> "$GITHUB_OUTPUT"
+          echo "validation_result=${success}" >> $GITHUB_OUTPUT
         
           # Kill the remaining process if still running
           pkill -P $$ docker 2>/dev/null
