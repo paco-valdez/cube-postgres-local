@@ -60,7 +60,7 @@ jobs:
     - name: Check if docker validation was successful
       if: always()
       run: |
-        if ${{ steps.docker-validate.outputs.validation_result }} == 1; then
+        if (( ${{ steps.docker-validate.outputs.validation_result }} == 1 )); then
           echo "Schema validation success"
           exit 0
         else
