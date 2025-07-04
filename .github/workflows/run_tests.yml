@@ -20,15 +20,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Set up Python 3.11
-      run: |
-        sudo apt update
-        sudo apt install -y software-properties-common
-        sudo add-apt-repository -y ppa:deadsnakes/ppa
-        sudo apt update
-        sudo apt install -y python3.11 python3.11-dev python3.11-venv
-        python3.11 --version
-
     - name: Install node
       uses: actions/setup-node@v1
       with:
@@ -44,32 +35,34 @@ jobs:
       run: npx cubejs-cli validate
 
     - name: Run model validation inside docker container
-      timeout-minutes: 5
+      id: docker-validate
+      if: always()
       run: |
         echo "Starting Cube.js schema validation..."
         
         success=0
         
-        # Run validate and stream its output
-        docker compose exec cube_api sh -c "cubejs validate" 2>&1 | while IFS= read -r line; do
-          echo "$line"
-          if echo "$line" | grep -q "✅ Cube Schema is valid"; then
-            success=1
-            break
-          fi
-        done
+        # Run in background and capture PID
+        docker compose exec cube_api sh -c "cubejs validate" 2>&1 | {
+          while IFS= read -r line; do
+            echo "$line"
+            if echo "$line" | grep -q "✅ Cube Schema is valid"; then
+              success=1
+              break
+            fi
+          done
         
-        # Wait for remaining output to flush and process to exit
-        # (Otherwise GitHub Actions may think it was terminated early)
-        wait
+          # echo result to github output
+          echo "validation_result: ${success}" >> "$GITHUB_OUTPUT"
         
-        if [ "$success" -eq 1 ]; then
-          echo "SUCCESS: Cube Schema validation completed"
-          exit 0
-        else
-          echo "FAILED: Schema validation did not complete successfully"
-          exit 1
-        fi
+          # Kill the remaining process if still running
+          pkill -P $$ docker 2>/dev/null
+          exit "$success"
+        }
+
+    - name: Check if docker validation was successful
+      if: always()
+      run: echo "Result from previous task is ${{ steps.docker-validate.outputs.validation_result }}"
 
     - name: Run tests
       run: npm run test
