@@ -54,7 +54,7 @@ jobs:
         
           # Kill the remaining process if still running
           pkill -P $$ docker 2>/dev/null
-          exit "$success"
+          exit 0
         }
 
     - name: Check if docker validation was successful

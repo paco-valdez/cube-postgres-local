@@ -1,4 +1,4 @@
-const cubejs = require('@cubejs-client/core');
+const {default: cube} = require('@cubejs-client/core');
 const sign = require('jwt-encode');
 // Defined as CUBEJS_API_SECRET=secret1234
 const secret = 'secret1234';
@@ -8,7 +8,7 @@ const data = {
 };
 const jwt = sign(data, secret);
 
-const cubejsApi = new cubejs.CubejsApi(
+const cubejsApi = cube(
     jwt,
     {apiUrl: 'http://localhost:4000/cubejs-api/v1'}
 );
